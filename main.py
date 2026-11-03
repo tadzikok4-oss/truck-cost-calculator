@@ -1,3 +1,42 @@
+def get_positive_number(message):
+    while True:
+        try:
+            value = float(input(message))
+
+            if value <= 0:
+                print("Blad! Wartosc musi byc wieksza od zera.")
+            else:
+                return value
+
+        except ValueError:
+            print("Blad! Wpisz poprawna liczbe.")
+
+def get_non_negative_number(message):
+    while True:
+        try:
+            value = float(input(message))
+
+            if value < 0:
+                print("Blad! Wartosc nie moze byc ujemna.")
+            else:
+                return value
+
+        except ValueError:
+            print("Blad! Wpisz poprawna liczbe.")
+
+
+def get_valid_choice(message, min_value, max_value):
+    while True:
+        choice = input(message)
+
+        if choice.isdigit():
+            choice = int(choice)
+
+            if min_value <= choice <= max_value:
+                return choice
+
+        print(f"Blad! Wybierz liczbe od {min_value} do {max_value}.")
+
 print("=== MENU GLOWNE ===")
 print("1. Oblicz nowa trase")
 print("2. Wyswietl historie tras")
@@ -6,7 +45,7 @@ print("4. Statystyki transportowe")
 print("5. Porownaj ciezarowki")
 print("6. Porownaj koszty przejazdu")
 
-menu = input("Wybierz opcje (1-6): ")
+menu = str(get_valid_choice("Wybierz opcje (1-6): ", 1, 6))
 
 if menu == "2":
     try:
@@ -78,8 +117,8 @@ elif menu == "5":
 elif menu == "6":
     print("=== POROWNANIE KOSZTOW PRZEJAZDU ===")
 
-    distance = float(input("Podaj dystans w km: "))
-    fuel_price = float(input("Podaj cene paliwa za litr: "))
+    distance = get_positive_number("Podaj dystans w km: ")
+    fuel_price = get_positive_number("Podaj cene paliwa za litr: ")
 
     trucks = {
         "MAN TGX": 25,
@@ -114,7 +153,7 @@ print("4. Volvo FH16")
 print("5. DAF XG+")
 print("6. Renault T")
 
-choice = input("Wybierz ciezarowke (1-6): ")
+choice = str(get_valid_choice("Wybierz ciezarowke (1-6): ", 1, 6))
 
 if choice == "1":
     truck = "MAN TGX"
@@ -151,9 +190,9 @@ print("--- DANE TRASY ---")
 start_city = input("Podaj miejscowosc poczatkowa: ")
 end_city = input("Podaj miejscowosc docelowa: ")
 
-distance = float(input("Podaj dystans w km: "))
-fuel_price = float(input("Podaj cene paliwa za litr: "))
-road_cost = float(input("Podaj koszt oplat drogowych: "))
+distance = get_positive_number("Podaj dystans trasy (km): ")
+fuel_price = get_positive_number("Podaj cene paliwa za litr (zl): ")
+road_cost = get_non_negative_number("Podaj koszt oplat drogowych: ")
 
 fuel_used = distance * fuel_consumption / 100
 total_cost = fuel_used * fuel_price
