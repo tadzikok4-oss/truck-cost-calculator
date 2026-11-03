@@ -148,6 +148,9 @@ print("Wybrano:", truck)
 
 print("--- DANE TRASY ---")
 
+start_city = input("Podaj miejscowosc poczatkowa: ")
+end_city = input("Podaj miejscowosc docelowa: ")
+
 distance = float(input("Podaj dystans w km: "))
 fuel_price = float(input("Podaj cene paliwa za litr: "))
 road_cost = float(input("Podaj koszt oplat drogowych: "))
@@ -159,6 +162,7 @@ round_trip_cost = total_cost * 2
 cost_per_km = total_cost / distance
 
 print("--- WYNIKI ---")
+print("Trasa:", start_city, "->", end_city)
 print("Ciezarowka:", truck)
 print("Spalanie:", fuel_consumption, "l/100 km")
 print("Dystans:", distance, "km")
@@ -168,6 +172,7 @@ print("Koszt paliwa na 1 km:", round(cost_per_km, 2), "zl")
 print("Koszt paliwa w obie strony:", round(round_trip_cost, 2), "zl")
 print("Calkowity koszt trasy z oplatami:", round(full_cost, 2), "zl")
 with open("historia.txt", "a", encoding="utf-8") as file:
+    file.write(f"Trasa: {start_city} -> {end_city}\n")
     file.write(f"Ciezarowka: {truck}\n")
     file.write(f"Dystans: {distance} km\n")
     file.write(f"Zuzyte paliwo: {fuel_used:.2f} l\n")
