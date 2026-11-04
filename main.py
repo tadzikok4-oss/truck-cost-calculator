@@ -37,30 +37,45 @@ def get_valid_choice(message, min_value, max_value):
 
         print(f"Blad! Wybierz liczbe od {min_value} do {max_value}.")
 
-print("=== MENU GLOWNE ===")
-print("1. Oblicz nowa trase")
-print("2. Wyswietl historie tras")
-print("3. Wyjscie")
-print("4. Statystyki transportowe")
-print("5. Porownaj ciezarowki")
-print("6. Porownaj koszty przejazdu")
+def get_currency():
+    print("Wybierz walute:")
+    print("1. PLN")
+    print("2. EUR")
+    print("3. CZK")
 
-menu = str(get_valid_choice("Wybierz opcje (1-6): ", 1, 6))
+    choice = get_valid_choice("Wybor (1-3): ", 1, 3)
 
-if menu == "2":
+    if choice == 1:
+        return "PLN", 1.0
+
+    elif choice == 2:
+        rate = get_positive_number("Podaj kurs EUR (1 EUR = ile PLN?): ")
+        return "EUR", rate
+
+    elif choice == 3:
+        rate = get_positive_number("Podaj kurs CZK (1 CZK = ile PLN?): ")
+        return "CZK", rate
+    
+def show_menu():
+    print("=== MENU GLOWNE ===")
+    print("1. Oblicz nowa trase")
+    print("2. Wyswietl historie tras")
+    print("3. Wyjscie")
+    print("4. Statystyki transportowe")
+    print("5. Porownaj ciezarowki")
+    print("6. Porownaj koszty przejazdu")
+
+def show_history():
     try:
         with open("historia.txt", "r", encoding="utf-8") as file:
             print("\n=== HISTORIA TRAS ===")
             print(file.read())
+
     except FileNotFoundError:
         print("Historia jest jeszcze pusta.")
-    exit()
 
-elif menu == "3":
-    print("Do zobaczenia!")
-    exit()
 
-elif menu == "4":
+def show_statistics():
     print("=== STATYSTYKI TRANSPORTOWE ===")
 
     try:
@@ -89,9 +104,7 @@ elif menu == "4":
 
     except FileNotFoundError:
         print("Brak historii tras.")
-
-    exit()
-elif menu == "5":
+def compare_trucks():
     print("=== POROWNANIE CIEZAROWEK ===")
 
     trucks = {
@@ -112,13 +125,13 @@ elif menu == "5":
 
     print("Najbardziej ekonomiczna ciezarowka:", best_truck)
     print("Spalanie:", trucks[best_truck], "l/100 km")
-
-    exit()
-elif menu == "6":
+def compare_costs():
     print("=== POROWNANIE KOSZTOW PRZEJAZDU ===")
 
+    currency, exchange_rate = get_currency()
+
     distance = get_positive_number("Podaj dystans w km: ")
-    fuel_price = get_positive_number("Podaj cene paliwa za litr: ")
+    fuel_price = get_positive_number(f"Podaj cene paliwa za litr ({currency}): ")
 
     trucks = {
         "MAN TGX": 25,
@@ -133,89 +146,115 @@ elif menu == "6":
         fuel_used = distance * consumption / 100
         cost = fuel_used * fuel_price
 
-        print(truck_name, "-", round(cost, 2), "zl")
+        cost_pln = cost * exchange_rate
+        print(truck_name, "-", round(cost, 2), currency, "(", round(cost_pln, 2), "PLN )")
+def calculate_route():
+    print("=== TRUCK COST CALCULATOR ===")
 
+    print("--- WYBOR CIEZAROWKI ---")
+    print("1. MAN TGX")
+    print("2. Scania S770")
+    print("3. Mercedes Actros")
+    print("4. Volvo FH16")
+    print("5. DAF XG+")
+    print("6. Renault T")
+
+
+    choice = str(get_valid_choice("Wybierz ciezarowke (1-6): ", 1, 6))
+
+    if choice == "1":
+        truck = "MAN TGX"
+        fuel_consumption = 25
+
+    elif choice == "2":
+        truck = "Scania S770"
+        fuel_consumption = 29
+
+    elif choice == "3":
+        truck = "Mercedes Actros"
+        fuel_consumption = 27
+
+    elif choice == "4":
+        truck = "Volvo FH16"
+        fuel_consumption = 28
+
+    elif choice == "5":
+        truck = "DAF XG+"
+        fuel_consumption = 24
+
+    elif choice == "6":
+        truck = "Renault T"
+        fuel_consumption = 25
+
+    else:
+        print("Nieprawidlowy wybor")
+        exit()
+
+    print("Wybrano:", truck)
+
+    print("--- DANE TRASY ---")
+
+    start_city = input("Podaj miejscowosc poczatkowa: ")
+    end_city = input("Podaj miejscowosc docelowa: ")
+
+    currency, exchange_rate = get_currency()
+
+    distance = get_positive_number("Podaj dystans trasy (km): ")
+    fuel_price = get_positive_number(f"Podaj cene paliwa za litr ({currency}): ")
+    road_cost = get_non_negative_number(f"Podaj koszt oplat drogowych ({currency}): ")
+
+    fuel_used = distance * fuel_consumption / 100
+    total_cost = fuel_used * fuel_price
+    full_cost = total_cost + road_cost
+    full_cost_pln = full_cost * exchange_rate
+    round_trip_cost = total_cost * 2
+    cost_per_km = total_cost / distance
+
+    print("--- WYNIKI ---")
+    print("Trasa:", start_city, "->", end_city)
+    print("Ciezarowka:", truck)
+    print("Spalanie:", fuel_consumption, "l/100 km")
+    print("Dystans:", distance, "km")
+    print("Zuzyte paliwo:", round(fuel_used, 2), "l")
+    print("Koszt paliwa:", round(total_cost, 2), currency)
+    print("Koszt paliwa na 1 km:", round(cost_per_km, 2), currency)
+    print("Koszt paliwa w obie strony:", round(round_trip_cost, 2), currency)
+    print("Calkowity koszt trasy z oplatami:", round(full_cost, 2), currency)
+
+    with open("historia.txt", "a", encoding="utf-8") as file:
+        file.write(f"Trasa: {start_city} -> {end_city}\n")
+        file.write(f"Ciezarowka: {truck}\n")
+        file.write(f"Dystans: {distance} km\n")
+        file.write(f"Zuzyte paliwo: {fuel_used:.2f} l\n")
+        file.write(f"Koszt calkowity: {full_cost_pln:.2f} zl\n")
+        file.write(f"Koszt w walucie: {full_cost:.2f} {currency}\n")
+        file.write("--------------------------\n")
+
+    print("Trasa zostala zapisana w historii!")
+
+show_menu()
+menu = str(get_valid_choice("Wybierz opcje (1-6): ", 1, 6))
+
+if menu == "2":
+    show_history()
     exit()
-    
-elif menu != "1":
-    print("Nieprawidlowy wybor.")
+
+elif menu == "3":
+    print("Do zobaczenia!")
     exit()
 
-
-
-print("=== TRUCK COST CALCULATOR ===")
-
-print("--- WYBOR CIEZAROWKI ---")
-print("1. MAN TGX")
-print("2. Scania S770")
-print("3. Mercedes Actros")
-print("4. Volvo FH16")
-print("5. DAF XG+")
-print("6. Renault T")
-
-choice = str(get_valid_choice("Wybierz ciezarowke (1-6): ", 1, 6))
-
-if choice == "1":
-    truck = "MAN TGX"
-    fuel_consumption = 25
-
-elif choice == "2":
-    truck = "Scania S770"
-    fuel_consumption = 29
-
-elif choice == "3":
-    truck = "Mercedes Actros"
-    fuel_consumption = 27
-
-elif choice == "4":
-    truck = "Volvo FH16"
-    fuel_consumption = 28
-
-elif choice == "5":
-    truck = "DAF XG+"
-    fuel_consumption = 24
-
-elif choice == "6":
-    truck = "Renault T"
-    fuel_consumption = 25
-
-else:
-    print("Nieprawidlowy wybor")
+elif menu == "4":
+    show_statistics()
     exit()
 
-print("Wybrano:", truck)
+elif menu == "5":
+    compare_trucks()
+    exit()
 
-print("--- DANE TRASY ---")
+elif menu == "6":
+    compare_costs()
+    exit()
 
-start_city = input("Podaj miejscowosc poczatkowa: ")
-end_city = input("Podaj miejscowosc docelowa: ")
-
-distance = get_positive_number("Podaj dystans trasy (km): ")
-fuel_price = get_positive_number("Podaj cene paliwa za litr (zl): ")
-road_cost = get_non_negative_number("Podaj koszt oplat drogowych: ")
-
-fuel_used = distance * fuel_consumption / 100
-total_cost = fuel_used * fuel_price
-full_cost = total_cost + road_cost
-round_trip_cost = total_cost * 2
-cost_per_km = total_cost / distance
-
-print("--- WYNIKI ---")
-print("Trasa:", start_city, "->", end_city)
-print("Ciezarowka:", truck)
-print("Spalanie:", fuel_consumption, "l/100 km")
-print("Dystans:", distance, "km")
-print("Zuzyte paliwo:", round(fuel_used, 2), "l")
-print("Koszt paliwa:", round(total_cost, 2), "zl")
-print("Koszt paliwa na 1 km:", round(cost_per_km, 2), "zl")
-print("Koszt paliwa w obie strony:", round(round_trip_cost, 2), "zl")
-print("Calkowity koszt trasy z oplatami:", round(full_cost, 2), "zl")
-with open("historia.txt", "a", encoding="utf-8") as file:
-    file.write(f"Trasa: {start_city} -> {end_city}\n")
-    file.write(f"Ciezarowka: {truck}\n")
-    file.write(f"Dystans: {distance} km\n")
-    file.write(f"Zuzyte paliwo: {fuel_used:.2f} l\n")
-    file.write(f"Koszt calkowity: {full_cost:.2f} zl\n")
-    file.write("--------------------------\n")
-
-print("Trasa zostala zapisana w historii!")
+elif menu == "1":
+    calculate_route()
+    exit()  
