@@ -1,0 +1,10 @@
+=== WYNIK KALKULACJI TRASY ===
+Trasa: tczew -> gdańsk
+Ciężarówka: MAN TGX | Ładunek: Częściowy ładunek (~10t)
+Spalanie bazowe: 25 l/100km | Rzeczywiste: 24.0 l/100km
+Zużyte paliwo: 8.40 l
+Koszt paliwa: 65.35 PLN | Myto + Inne: 0.00 PLN
+CAŁKOWITY KOSZT: 65.35 PLN (65.35 PLN)
+Koszt paliwa na 1 km: 1.87 PLN
+
+Wygenerowano automatycznie przez Truck Cost Calculator V6.5

@@ -1,0 +1,92 @@
+Ciezarowka: MAN TGX
+Dystans: 6893.0 km
+Zuzyte paliwo: 1723.25 l
+Koszt calkowity: 15889.04 zl
+--------------------------
+Ciezarowka: Mercedes Actros
+Dystans: 9864.0 km
+Zuzyte paliwo: 2663.28 l
+Koszt calkowity: 18461.00 zl
+--------------------------
+Ciezarowka: Mercedes Actros
+Dystans: 35.0 km
+Zuzyte paliwo: 9.45 l
+Koszt calkowity: 73.52 zl
+--------------------------
+Ciezarowka: DAF XG+
+Dystans: 35.0 km
+Zuzyte paliwo: 8.40 l
+Koszt calkowity: 58.80 zl
+--------------------------
+Trasa: gadnsk -> tczew
+Ciezarowka: Volvo FH16
+Dystans: 35.0 km
+Zuzyte paliwo: 9.80 l
+Koszt calkowity: 68.50 zl
+--------------------------
+Trasa: gdansk -> 8tczew
+Ciezarowka: MAN TGX
+Dystans: 35.0 km
+Zuzyte paliwo: 8.75 l
+Koszt calkowity: 56.88 zl
+--------------------------
+Trasa: tzcew -> gdanks
+Ciezarowka: MAN TGX
+Dystans: 35.0 km
+Zuzyte paliwo: 8.75 l
+Koszt calkowity: 61.25 zl
+--------------------------
+Trasa: tczew -> gdansk
+Ciezarowka: MAN TGX
+Dystans: 35.0 km
+Zuzyte paliwo: 8.75 l
+Koszt calkowity: 52.50 zl
+--------------------------
+Trasa: gdansk -> tczew
+Ciezarowka: MAN TGX
+Dystans: 35.0 km
+Zuzyte paliwo: 8.75 l
+Koszt calkowity: 67.99 zl
+--------------------------
+Trasa: gdansk -> tczew
+Ciezarowka: Scania S770
+Dystans: 35.0 km
+Zuzyte paliwo: 10.15 l
+Koszt calkowity: 60.90 zl
+Koszt w walucie: 60.90 PLN
+--------------------------
+Trasa: gdansk -> tczew
+Ciezarowka: Mercedes Actros
+Dystans: 35.0 km
+Zuzyte paliwo: 9.45 l
+Koszt calkowity: 64.61 zl
+Koszt w walucie: 15.03 EUR
+--------------------------
+Trasa:  -> 1
+Ciezarowka: MAN TGX
+Dystans: 1.0 km
+Zuzyte paliwo: 0.25 l
+Koszt calkowity: 1.25 zl
+Koszt w walucie: 1.25 PLN
+--------------------------
+Trasa: berlin -> tczew
+Ciezarowka: Volvo FH16
+Dystans: 500.0 km
+Zuzyte paliwo: 140.00 l
+Koszt calkowity: 4136.58 zl
+Koszt w walucie: 938.00 EUR
+--------------------------
+Trasa: berlin -> tczew (Scania S770, Pełny ładunek (~24t))
+Ciezarowka: Scania S770
+Dystans: 500.0 km
+Zuzyte paliwo: 162.50 l
+Koszt calkowity: 1423.00 zl
+Koszt w walucie: 1423.00 PLN
+--------------------------
+Trasa: tczew -> gdańsk (MAN TGX, Częściowy ładunek (~10t))
+Ciezarowka: MAN TGX
+Dystans: 35.0 km
+Zuzyte paliwo: 8.40 l
+Koszt calkowity: 65.35 zl
+Koszt w walucie: 65.35 PLN
+--------------------------
