@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Cost Calculator - Web Pro V7.2</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        select, input {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        .result-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .result-box.highlight {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+        }
+
+        .result-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .result-box.highlight .result-value {
+            color: #4ade80;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🚛 Truck Cost Calculator V7.2</h1>
+        <p style="color: var(--text-muted);">Profesjonalny kalkulator kosztów trasy i rentowności transportu</p>
+    </div>
+
+    <div class="card">
+        <h3>1. Wybór Pojazdu i Trasy</h3>
+        <div class="grid">
+            <div class="form-group">
+                <label>Pojazd</label>
+                <select id="truckSelect" onchange="updateTruckData()">
+                    <option value="scania">Scania R450 Streamline (28.5 l/100km)</option>
+                    <option value="volvo">Volvo FH16 750 (32.0 l/100km)</option>
+                    <option value="daf">DAF XF 530 (29.0 l/100km)</option>
+                    <option value="bus">Bus 3.5t Master/Sprinter (11.5 l/100km)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Dystans trasy (km)</label>
+                <input type="number" id="distance" value="1250" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Cena paliwa za litr (PLN)</label>
+                <input type="number" id="fuelPrice" step="0.01" value="6.45" oninput="calculate()">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>2. Opłaty i Koszty Dodatkowe</h3>
+        <div class="grid">
+            <div class="form-group">
+                <label>Opłaty drogowe / Toll / e-TOLL (PLN)</label>
+                <input type="number" id="tolls" value="480" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Dieta kierowcy i noclegi (PLN)</label>
+                <input type="number" id="driverCost" value="350" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Inne koszty / Promy / Serwis (PLN)</label>
+                <input type="number" id="otherCosts" value="150" oninput="calculate()">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>3. Stawka i Fracht</h3>
+        <div class="grid">
+            <div class="form-group">
+                <label>Oferowany fracht za całą trasę (PLN)</label>
+                <input type="number" id="freightPrice" value="4500" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Zużycie paliwa pojazdu (l/100km)</label>
+                <input type="number" id="consumption" step="0.1" value="28.5" oninput="calculate()">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📊 Podsumowanie i Rentowność</h3>
+        <div class="results">
+            <div class="result-box">
+                <div class="result-title">Koszt Paliwa</div>
+                <div class="result-value" id="resFuel">0 PLN</div>
+            </div>
+            <div class="result-box">
+                <div class="result-title">Całkowity Koszt Trasy</div>
+                <div class="result-value" id="resTotalCost">0 PLN</div>
+            </div>
+            <div class="result-box">
+                <div class="result-title">Koszt na 1 km</div>
+                <div class="result-value" id="resCostPerKm">0 PLN/km</div>
+            </div>
+            <div class="result-box highlight">
+                <div class="result-title">Czysty Zysk (Zarobek)</div>
+                <div class="result-value" id="resProfit">0 PLN</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const truckData = {
+        scania: 28.5,
+        volvo: 32.0,
+        daf: 29.0,
+        bus: 11.5
+    };
+
+    function updateTruckData() {
+        const selected = document.getElementById('truckSelect').value;
+        document.getElementById('consumption').value = truckData[selected];
+        calculate();
+    }
+
+    function calculate() {
+        const distance = parseFloat(document.getElementById('distance').value) || 0;
+        const fuelPrice = parseFloat(document.getElementById('fuelPrice').value) || 0;
+        const consumption = parseFloat(document.getElementById('consumption').value) || 0;
+        const tolls = parseFloat(document.getElementById('tolls').value) || 0;
+        const driverCost = parseFloat(document.getElementById('driverCost').value) || 0;
+        const otherCosts = parseFloat(document.getElementById('otherCosts').value) || 0;
+        const freightPrice = parseFloat(document.getElementById('freightPrice').value) || 0;
+
+        const fuelCost = (distance / 100) * consumption * fuelPrice;
+        const totalCost = fuelCost + tolls + driverCost + otherCosts;
+        const costPerKm = distance > 0 ? (totalCost / distance) : 0;
+        const profit = freightPrice - totalCost;
+
+        document.getElementById('resFuel').innerText = fuelCost.toFixed(2) + ' PLN';
+        document.getElementById('resTotalCost').innerText = totalCost.toFixed(2) + ' PLN';
+        document.getElementById('resCostPerKm').innerText = costPerKm.toFixed(2) + ' PLN/km';
+        document.getElementById('resProfit').innerText = profit.toFixed(2) + ' PLN';
+    }
+
+    // Pierwsze przeliczenie na starcie
+    calculate();
+</script>
+
+</body>
+</html>
