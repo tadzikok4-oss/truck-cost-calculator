@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truck Cost Calculator - Web Pro V7.2</title>
+    <title>Truck Cost Calculator - Pro V7.2</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -13,6 +13,7 @@
             --text-color: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
+            --success-color: #22c55e;
         }
 
         body {
@@ -26,7 +27,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             width: 100%;
         }
 
@@ -51,7 +52,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
         }
 
@@ -64,6 +65,7 @@
         label {
             font-size: 0.9rem;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
         select, input {
@@ -82,7 +84,7 @@
 
         .results {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
             gap: 16px;
             margin-top: 15px;
         }
@@ -97,7 +99,7 @@
 
         .result-box.highlight {
             background: rgba(34, 197, 94, 0.15);
-            border-color: #22c55e;
+            border-color: var(--success-color);
         }
 
         .result-title {
@@ -107,7 +109,7 @@
         }
 
         .result-value {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
         }
 
@@ -120,22 +122,39 @@
 
 <div class="container">
     <div class="header">
-        <h1>🚛 Truck Cost Calculator V7.2</h1>
-        <p style="color: var(--text-muted);">Profesjonalny kalkulator kosztów trasy i rentowności transportu</p>
+        <h1>🚛 Truck Cost Calculator V7.2 Pro</h1>
+        <p style="color: var(--text-muted);">Zaawansowany kalkulator rentowności z wyborem silników i konfiguracji</p>
     </div>
 
     <div class="card">
-        <h3>1. Wybór Pojazdu i Trasy</h3>
+        <h3>1. Konfiguracja Pojazdu i Silnika</h3>
         <div class="grid">
             <div class="form-group">
-                <label>Pojazd</label>
-                <select id="truckSelect" onchange="updateTruckData()">
-                    <option value="scania">Scania R450 Streamline (28.5 l/100km)</option>
-                    <option value="volvo">Volvo FH16 750 (32.0 l/100km)</option>
-                    <option value="daf">DAF XF 530 (29.0 l/100km)</option>
-                    <option value="bus">Bus 3.5t Master/Sprinter (11.5 l/100km)</option>
+                <label>Marka i Model Ciężarówki / Pojazdu</label>
+                <select id="truckBrand" onchange="updateEngineList()">
+                    <option value="volvo">Volvo FH / FM</option>
+                    <option value="scania">Scania R / S Series</option>
+                    <option value="daf">DAF XF / XG</option>
+                    <option value="mercedes">Mercedes-Benz Actros</option>
+                    <option value="bus">Bus dostawczy 3.5t (Master/Sprinter)</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>Wersja Silnika i Moc</label>
+                <select id="engineSelect" onchange="updateConsumptionFromEngine()">
+                    <!-- Wypełniane dynamicznie przez JS -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Średnie spalanie bazowe (l/100km)</label>
+                <input type="number" id="consumption" step="0.1" value="31.0" oninput="calculate()">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>2. Parametry Trasy i Paliwo</h3>
+        <div class="grid">
             <div class="form-group">
                 <label>Dystans trasy (km)</label>
                 <input type="number" id="distance" value="1250" oninput="calculate()">
@@ -144,50 +163,48 @@
                 <label>Cena paliwa za litr (PLN)</label>
                 <input type="number" id="fuelPrice" step="0.01" value="6.45" oninput="calculate()">
             </div>
+            <div class="form-group">
+                <label>Waga ładunku / Stopień załadunku</label>
+                <select id="loadFactor" onchange="calculate()">
+                    <option value="1.0">Pełny ładunek (~24t) [Standard]</option>
+                    <option value="0.9">Średni ładunek (~12-15t) [-5% spalania]</option>
+                    <option value="0.8">Pusty / Lekki przebieg [-12% spalania]</option>
+                </select>
+            </div>
         </div>
     </div>
 
     <div class="card">
-        <h3>2. Opłaty i Koszty Dodatkowe</h3>
+        <h3>3. Koszty Operacyjne i Fracht</h3>
         <div class="grid">
             <div class="form-group">
-                <label>Opłaty drogowe / Toll / e-TOLL (PLN)</label>
+                <label>Opłaty drogowe / e-TOLL / Promy (PLN)</label>
                 <input type="number" id="tolls" value="480" oninput="calculate()">
             </div>
             <div class="form-group">
-                <label>Dieta kierowcy i noclegi (PLN)</label>
+                <label>Dieta kierowcy i koszty delegacji (PLN)</label>
                 <input type="number" id="driverCost" value="350" oninput="calculate()">
             </div>
             <div class="form-group">
-                <label>Inne koszty / Promy / Serwis (PLN)</label>
-                <input type="number" id="otherCosts" value="150" oninput="calculate()">
+                <label>Inne (serwis, ogumienie, AdBlue) (PLN)</label>
+                <input type="number" id="otherCosts" value="200" oninput="calculate()">
             </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>3. Stawka i Fracht</h3>
-        <div class="grid">
             <div class="form-group">
                 <label>Oferowany fracht za całą trasę (PLN)</label>
-                <input type="number" id="freightPrice" value="4500" oninput="calculate()">
-            </div>
-            <div class="form-group">
-                <label>Zużycie paliwa pojazdu (l/100km)</label>
-                <input type="number" id="consumption" step="0.1" value="28.5" oninput="calculate()">
+                <input type="number" id="freightPrice" value="5200" oninput="calculate()">
             </div>
         </div>
     </div>
 
     <div class="card">
-        <h3>📊 Podsumowanie i Rentowność</h3>
+        <h3>📊 Podsumowanie Finansowe Trasy</h3>
         <div class="results">
             <div class="result-box">
                 <div class="result-title">Koszt Paliwa</div>
                 <div class="result-value" id="resFuel">0 PLN</div>
             </div>
             <div class="result-box">
-                <div class="result-title">Całkowity Koszt Trasy</div>
+                <div class="result-title">Całkowity Koszt</div>
                 <div class="result-value" id="resTotalCost">0 PLN</div>
             </div>
             <div class="result-box">
@@ -195,7 +212,7 @@
                 <div class="result-value" id="resCostPerKm">0 PLN/km</div>
             </div>
             <div class="result-box highlight">
-                <div class="result-title">Czysty Zysk (Zarobek)</div>
+                <div class="result-title">Czysty Zysk z Trasy</div>
                 <div class="result-value" id="resProfit">0 PLN</div>
             </div>
         </div>
@@ -203,29 +220,77 @@
 </div>
 
 <script>
-    const truckData = {
-        scania: 28.5,
-        volvo: 32.0,
-        daf: 29.0,
-        bus: 11.5
+    // Baza silników dla poszczególnych marek
+    const enginesData = {
+        volvo: [
+            { name: 'FH 460 KM (D13K)', consumption: 29.5 },
+            { name: 'FH 500 KM (D13K - Popularny)', consumption: 31.0 },
+            { name: 'FH 540 KM (D13K)', consumption: 32.5 },
+            { name: 'FH16 750 KM (Heavy Haul)', consumption: 37.0 }
+        ],
+        scania: [
+            { name: 'R 410 KM (Super)', consumption: 27.5 },
+            { name: 'R 450 KM (Streamline)', consumption: 28.5 },
+            { name: 'R 500 KM V8 / Inline', consumption: 31.5 },
+            { name: 'S 660 KM V8', consumption: 35.0 }
+        ],
+        daf: [
+            { name: 'XF 450 (New Generation)', consumption: 28.0 },
+            { name: 'XG 480 (PACCAR MX-13)', consumption: 29.0 },
+            { name: 'XF 530 (High Power)', consumption: 31.5 }
+        ],
+        mercedes: [
+            { name: 'Actros 1845 (OM 471)', consumption: 29.0 },
+            { name: 'Actros 1848 StreamSpace', consumption: 30.0 },
+            { name: 'Actros 1853 Gigaspace', consumption: 32.0 }
+        ],
+        bus: [
+            { name: 'Renault Master 2.3 dCi (165 KM)', consumption: 10.5 },
+            { name: 'Mercedes Sprinter 319 CDI (190 KM)', consumption: 11.8 },
+            { name: 'Iveco Daily 3.0 Hi-Matic (210 KM)', consumption: 13.0 }
+        ]
     };
 
-    function updateTruckData() {
-        const selected = document.getElementById('truckSelect').value;
-        document.getElementById('consumption').value = truckData[selected];
+    function updateEngineList() {
+        const brandSelect = document.getElementById('truckBrand').value;
+        const engineSelect = document.getElementById('engineSelect');
+        const engines = enginesData[brandSelect];
+
+        // Wyczyszczenie listy silników
+        engineSelect.innerHTML = '';
+
+        // Wypełnienie nowymi opcjami
+        engines.forEach(eng => {
+            const option = document.createElement('option');
+            option.value = eng.consumption;
+            option.text = eng.name;
+            engineSelect.appendChild(option);
+        });
+
+        updateConsumptionFromEngine();
+    }
+
+    function updateConsumptionFromEngine() {
+        const engineSelect = document.getElementById('engineSelect');
+        document.getElementById('consumption').value = engineSelect.value;
         calculate();
     }
 
     function calculate() {
         const distance = parseFloat(document.getElementById('distance').value) || 0;
         const fuelPrice = parseFloat(document.getElementById('fuelPrice').value) || 0;
-        const consumption = parseFloat(document.getElementById('consumption').value) || 0;
+        let baseConsumption = parseFloat(document.getElementById('consumption').value) || 0;
+        
+        // Korekta spalania w zależności od ładunku
+        const loadFactor = parseFloat(document.getElementById('loadFactor').value) || 1.0;
+        const adjustedConsumption = baseConsumption * loadFactor;
+
         const tolls = parseFloat(document.getElementById('tolls').value) || 0;
         const driverCost = parseFloat(document.getElementById('driverCost').value) || 0;
         const otherCosts = parseFloat(document.getElementById('otherCosts').value) || 0;
         const freightPrice = parseFloat(document.getElementById('freightPrice').value) || 0;
 
-        const fuelCost = (distance / 100) * consumption * fuelPrice;
+        const fuelCost = (distance / 100) * adjustedConsumption * fuelPrice;
         const totalCost = fuelCost + tolls + driverCost + otherCosts;
         const costPerKm = distance > 0 ? (totalCost / distance) : 0;
         const profit = freightPrice - totalCost;
@@ -236,8 +301,8 @@
         document.getElementById('resProfit').innerText = profit.toFixed(2) + ' PLN';
     }
 
-    // Pierwsze przeliczenie na starcie
-    calculate();
+    // Inicjalizacja przy starcie strony
+    updateEngineList();
 </script>
 
 </body>
